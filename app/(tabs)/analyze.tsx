@@ -15,7 +15,6 @@ import RunAnalysisButton from '@/components/analyze/RunAnalysisButton';
 import TimeframeSelector from '@/components/analyze/TimeframeSelector';
 import TradingViewCard from '@/components/analyze/TradingViewCard';
 import UploadFallback from '@/components/analyze/UploadFallback';
-import BottomNav from '@/components/BottomNav';
 import GlassTopBar from '@/components/GlassTopBar';
 import ProfileModal from '@/components/ProfileModal';
 import { AnalysisOutput } from '@/ai/types';
@@ -105,7 +104,7 @@ export default function AnalyzeScreen() {
           contentContainerStyle={{
             paddingHorizontal: 16,
             paddingTop: 16,
-            paddingBottom: 160,
+            paddingBottom: 40,
           }}
           showsVerticalScrollIndicator={false}
           keyboardShouldPersistTaps="handled"
@@ -204,8 +203,6 @@ export default function AnalyzeScreen() {
         </ScrollView>
 
       </SafeAreaView>
-
-      <BottomNav />
       <ProfileModal
         visible={profileVisible}
         onClose={() => setProfileVisible(false)}
