@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { View, Text, ScrollView, StatusBar } from 'react-native';
+import React from 'react';
+import { View, Text, ScrollView, StatusBar, Pressable } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
+import { useRouter } from 'expo-router';
 
-import GlassTopBar from '@/components/GlassTopBar';
 import BottomNav from '@/components/BottomNav';
 
 const STATS = [
@@ -23,6 +23,16 @@ const RECENT = [
 ];
 
 export default function DashboardScreen() {
+  const router = useRouter();
+
+  const handleBack = () => {
+    if (router.canGoBack()) {
+      router.back();
+    } else {
+      router.replace('/(tabs)/analyze');
+    }
+  };
+
   return (
     <View className="flex-1 bg-[#06080F]">
       <StatusBar barStyle="light-content" />
@@ -33,7 +43,24 @@ export default function DashboardScreen() {
       />
 
       <SafeAreaView className="flex-1" edges={['top']}>
-        <GlassTopBar />
+        <View className="mx-4 mt-2 rounded-2xl overflow-hidden border border-white/10">
+          <BlurView intensity={40} tint="dark">
+            <View className="flex-row items-center justify-between px-4 h-14 bg-white/[0.08]">
+              <Pressable
+                onPress={handleBack}
+                hitSlop={12}
+                className="flex-row items-center gap-1"
+              >
+                <Ionicons name="chevron-back" size={20} color="#F0F4FF" />
+                <Text className="text-[#8B95A8] text-sm">Back</Text>
+              </Pressable>
+              <Text className="text-[#F0F4FF] text-base font-semibold">
+                Dashboard
+              </Text>
+              <View className="w-12" />
+            </View>
+          </BlurView>
+        </View>
 
         <ScrollView
           className="flex-1"
