@@ -1,103 +1,247 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { View, Text, Pressable, ScrollView } from 'react-native';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
 
-const MOCK_NEWS = [
+type NewsItem = {
+  id: string;
+  source: string;
+  sourceColor: string;
+  headline: string;
+  time: string;
+  impact: 'high' | 'medium' | 'low';
+  category: 'Forex' | 'Crypto' | 'Macro';
+};
+
+const ALL_NEWS: NewsItem[] = [
   {
     id: '1',
     source: 'ForexFactory',
     sourceColor: '#F59E0B',
     headline: 'Fed signals cautious approach to rate cuts amid persistent inflation data',
-    time: '12m ago',
+    time: '2m ago',
     impact: 'high',
+    category: 'Macro',
   },
   {
     id: '2',
-    source: 'Reuters',
-    sourceColor: '#F87171',
-    headline: 'Gold hits fresh highs as safe-haven demand surges on geopolitical tensions',
-    time: '34m ago',
-    impact: 'medium',
-  },
-  {
-    id: '3',
     source: 'Bloomberg',
     sourceColor: '#4F8EF7',
     headline: 'Bitcoin consolidates above $66K ahead of key resistance at $68K level',
-    time: '1h ago',
-    impact: 'low',
+    time: '5m ago',
+    impact: 'medium',
+    category: 'Crypto',
+  },
+  {
+    id: '3',
+    source: 'Reuters',
+    sourceColor: '#F87171',
+    headline: 'Gold hits fresh highs as safe-haven demand surges on geopolitical tensions',
+    time: '18m ago',
+    impact: 'high',
+    category: 'Macro',
   },
   {
     id: '4',
     source: 'Investing',
     sourceColor: '#8B5CF6',
     headline: 'EUR/USD tests critical 1.0850 support as dollar index strengthens',
-    time: '2h ago',
+    time: '31m ago',
     impact: 'high',
+    category: 'Forex',
+  },
+  {
+    id: '5',
+    source: 'ForexFactory',
+    sourceColor: '#F59E0B',
+    headline: 'GBP/USD bulls defend 1.2700 ahead of UK CPI data release tomorrow',
+    time: '44m ago',
+    impact: 'medium',
+    category: 'Forex',
+  },
+  {
+    id: '6',
+    source: 'Bloomberg',
+    sourceColor: '#4F8EF7',
+    headline: 'Ethereum ETF inflows hit record $180M as institutional demand surges',
+    time: '1h ago',
+    impact: 'medium',
+    category: 'Crypto',
+  },
+  {
+    id: '7',
+    source: 'Reuters',
+    sourceColor: '#F87171',
+    headline: 'OPEC+ maintains output cuts, crude oil prices rally toward $88',
+    time: '1h ago',
+    impact: 'low',
+    category: 'Macro',
   },
 ];
 
-const IMPACT_COLORS: Record<string, string> = {
-  high:   '#F87171',
-  medium: '#F59E0B',
-  low:    '#34D399',
-};
+const FILTERS = ['All', 'Forex', 'Crypto', 'Macro'] as const;
+type Filter = (typeof FILTERS)[number];
+
+const IMPACT_COLORS = { high: '#F87171', medium: '#F59E0B', low: '#34D399' };
 
 export default function MarketNewsSection() {
+  const [active, setActive] = useState<Filter>('All');
+
+  const filtered =
+    active === 'All' ? ALL_NEWS : ALL_NEWS.filter((news) => news.category === active);
+  const visible = filtered.slice(0, 5);
+
   return (
     <View>
-      {/* Section header */}
-      <View className="flex-row items-center justify-between mb-3">
-        <View className="flex-row items-center gap-2">
-          <Text className="text-[#8B95A8] text-[11px] font-semibold tracking-[1.5px] uppercase">
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          marginBottom: 10,
+        }}
+      >
+        <View style={{ flexDirection: 'row', alignItems: 'center', gap: 8 }}>
+          <Text
+            style={{
+              color: '#8B95A8',
+              fontSize: 11,
+              fontWeight: '700',
+              letterSpacing: 1.5,
+              textTransform: 'uppercase',
+            }}
+          >
             Market News
           </Text>
-          {/* Live badge */}
-          <View className="flex-row items-center gap-1 px-2 py-0.5 rounded-full bg-[#F87171]/15 border border-[#F87171]/30">
-            <View className="w-1.5 h-1.5 rounded-full bg-[#F87171]" style={{ shadowColor: '#F87171', shadowOpacity: 1, shadowRadius: 4, shadowOffset: { width: 0, height: 0 } }} />
-            <Text className="text-[#F87171] text-[10px] font-bold tracking-wide">LIVE</Text>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              gap: 4,
+              paddingHorizontal: 7,
+              paddingVertical: 2,
+              borderRadius: 999,
+              backgroundColor: 'rgba(248,113,113,0.15)',
+              borderWidth: 1,
+              borderColor: 'rgba(248,113,113,0.30)',
+            }}
+          >
+            <View style={{ width: 5, height: 5, borderRadius: 3, backgroundColor: '#F87171' }} />
+            <Text style={{ color: '#F87171', fontSize: 9, fontWeight: '800', letterSpacing: 1.2 }}>
+              LIVE
+            </Text>
           </View>
         </View>
-        <Pressable className="flex-row items-center gap-1 active:opacity-70">
-          <Text className="text-[#4F8EF7] text-xs font-semibold">See all</Text>
+        <Pressable style={{ flexDirection: 'row', alignItems: 'center', gap: 2 }}>
+          <Text style={{ color: '#4F8EF7', fontSize: 12, fontWeight: '600' }}>See all</Text>
           <Ionicons name="chevron-forward" size={12} color="#4F8EF7" />
         </Pressable>
       </View>
 
-      {/* News cards */}
-      <View className="gap-2.5">
-        {MOCK_NEWS.map((item) => (
-          <Pressable key={item.id} className="active:opacity-80">
-            <View className="rounded-2xl overflow-hidden border border-white/[0.10]">
-              <BlurView intensity={15} tint="dark">
-                <View className="flex-row gap-3 p-3.5 bg-white/[0.04]">
+      <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginBottom: 10 }}>
+        <View style={{ flexDirection: 'row', gap: 8, paddingRight: 16 }}>
+          {FILTERS.map((filter) => {
+            const isActive = active === filter;
 
-                  {/* Impact dot */}
-                  <View className="pt-1">
+            return (
+              <Pressable key={filter} onPress={() => setActive(filter)}>
+                <View
+                  style={{
+                    paddingHorizontal: 14,
+                    paddingVertical: 6,
+                    borderRadius: 999,
+                    backgroundColor: isActive ? 'rgba(79,142,247,0.18)' : 'rgba(255,255,255,0.05)',
+                    borderWidth: 1,
+                    borderColor: isActive ? 'rgba(79,142,247,0.50)' : 'rgba(255,255,255,0.10)',
+                  }}
+                >
+                  <Text
+                    style={{
+                      color: isActive ? '#4F8EF7' : '#8B95A8',
+                      fontSize: 12,
+                      fontWeight: '600',
+                    }}
+                  >
+                    {filter}
+                  </Text>
+                </View>
+              </Pressable>
+            );
+          })}
+        </View>
+      </ScrollView>
+
+      <View style={{ gap: 8 }}>
+        {visible.map((item) => (
+          <Pressable key={item.id}>
+            <View
+              style={{
+                borderRadius: 16,
+                overflow: 'hidden',
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.09)',
+              }}
+            >
+              <BlurView intensity={15} tint="dark">
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    gap: 10,
+                    padding: 12,
+                    backgroundColor: 'rgba(255,255,255,0.03)',
+                  }}
+                >
+                  <View style={{ paddingTop: 4 }}>
                     <View
-                      className="w-2 h-2 rounded-full"
-                      style={{ backgroundColor: IMPACT_COLORS[item.impact] }}
+                      style={{
+                        width: 7,
+                        height: 7,
+                        borderRadius: 4,
+                        backgroundColor: IMPACT_COLORS[item.impact],
+                      }}
                     />
                   </View>
-
-                  {/* Content */}
-                  <View className="flex-1">
-                    <View className="flex-row items-center gap-2 mb-1">
+                  <View style={{ flex: 1 }}>
+                    <View
+                      style={{
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        gap: 6,
+                        marginBottom: 3,
+                      }}
+                    >
                       <Text
-                        className="text-[10px] font-bold tracking-wide"
-                        style={{ color: item.sourceColor }}
+                        style={{
+                          color: item.sourceColor,
+                          fontSize: 10,
+                          fontWeight: '800',
+                          letterSpacing: 0.5,
+                        }}
                       >
                         {item.source}
                       </Text>
-                      <Text className="text-[#4A5568] text-[10px]">{item.time}</Text>
+                      <Text style={{ color: '#4A5568', fontSize: 10 }}>{item.time}</Text>
+                      <View
+                        style={{
+                          paddingHorizontal: 5,
+                          paddingVertical: 1,
+                          borderRadius: 4,
+                          backgroundColor: 'rgba(255,255,255,0.06)',
+                        }}
+                      >
+                        <Text style={{ color: '#8B95A8', fontSize: 9, fontWeight: '600' }}>
+                          {item.category}
+                        </Text>
+                      </View>
                     </View>
-                    <Text className="text-[#F0F4FF] text-xs leading-4 font-medium" numberOfLines={2}>
+                    <Text
+                      style={{ color: '#F0F4FF', fontSize: 12, lineHeight: 17, fontWeight: '500' }}
+                      numberOfLines={2}
+                    >
                       {item.headline}
                     </Text>
                   </View>
-
-                  <Ionicons name="chevron-forward" size={14} color="#4A5568" />
+                  <Ionicons name="chevron-forward" size={13} color="#4A5568" style={{ marginTop: 2 }} />
                 </View>
               </BlurView>
             </View>

@@ -10,6 +10,11 @@ export type AnalysisPreview = {
   confidenceLabel: 'High' | 'Medium' | 'Low';
   support: string;
   resistance: string;
+  entry: string;
+  sl: string;
+  tp: string;
+  rr: string;
+  explanation: string;
   riskSummary: string;
 };
 
@@ -19,131 +24,301 @@ type Props = {
 };
 
 const BIAS_COLORS = {
-  Bullish: { text: '#34D399', bg: 'rgba(52,211,153,0.12)', border: 'rgba(52,211,153,0.30)' },
-  Bearish: { text: '#F87171', bg: 'rgba(248,113,113,0.12)', border: 'rgba(248,113,113,0.30)' },
-  Neutral: { text: '#F59E0B', bg: 'rgba(245,158,11,0.12)',  border: 'rgba(245,158,11,0.30)'  },
+  Bullish: {
+    text: '#34D399',
+    bg: 'rgba(52,211,153,0.15)',
+    border: 'rgba(52,211,153,0.40)',
+    icon: 'trending-up' as const,
+  },
+  Bearish: {
+    text: '#F87171',
+    bg: 'rgba(248,113,113,0.15)',
+    border: 'rgba(248,113,113,0.40)',
+    icon: 'trending-down' as const,
+  },
+  Neutral: {
+    text: '#F59E0B',
+    bg: 'rgba(245,158,11,0.15)',
+    border: 'rgba(245,158,11,0.40)',
+    icon: 'remove' as const,
+  },
 };
 
-const CONF_COLORS = { High: '#34D399', Medium: '#F59E0B', Low: '#F87171' };
+const CONFIDENCE_COLORS = { High: '#34D399', Medium: '#F59E0B', Low: '#F87171' };
 
 export default function ResultPreviewCard({ data, onViewReport }: Props) {
-  const biasStyle  = BIAS_COLORS[data.bias];
-  const confColor  = CONF_COLORS[data.confidenceLabel];
-  const barWidth = `${data.confidence}%` as const;
+  const biasStyle = BIAS_COLORS[data.bias];
+  const confidenceColor = CONFIDENCE_COLORS[data.confidenceLabel];
+  const confidenceWidth = `${data.confidence}%` as const;
 
   return (
-    <View className="rounded-3xl overflow-hidden border border-white/[0.14]">
-      <BlurView intensity={25} tint="dark">
-        <View className="bg-white/[0.04]">
-
-          {/* Header */}
-          <View className="flex-row items-center justify-between px-4 pt-4 pb-3 border-b border-white/[0.06]">
-            <View className="flex-row items-center gap-2">
-              <Ionicons name="checkmark-circle" size={16} color="#34D399" />
-              <Text className="text-[#F0F4FF] text-sm font-bold tracking-wide">
+    <View style={{ borderRadius: 24, overflow: 'hidden', borderWidth: 1, borderColor: biasStyle.border }}>
+      <BlurView intensity={30} tint="dark">
+        <View style={{ backgroundColor: 'rgba(255,255,255,0.04)' }}>
+          <View
+            style={{
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              paddingHorizontal: 16,
+              paddingTop: 14,
+              paddingBottom: 12,
+              borderBottomWidth: 1,
+              borderBottomColor: 'rgba(255,255,255,0.07)',
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+              <Ionicons name="checkmark-circle" size={15} color="#34D399" />
+              <Text style={{ color: '#F0F4FF', fontSize: 13, fontWeight: '700', letterSpacing: 0.3 }}>
                 Analysis Complete
               </Text>
             </View>
-            <View className="px-2 py-0.5 rounded-full bg-[#34D399]/15 border border-[#34D399]/30">
-              <Text className="text-[#34D399] text-[10px] font-bold">AI RESULT</Text>
+            <View
+              style={{
+                paddingHorizontal: 8,
+                paddingVertical: 3,
+                borderRadius: 999,
+                backgroundColor: 'rgba(52,211,153,0.12)',
+                borderWidth: 1,
+                borderColor: 'rgba(52,211,153,0.30)',
+              }}
+            >
+              <Text style={{ color: '#34D399', fontSize: 9, fontWeight: '800', letterSpacing: 1.2 }}>
+                AI RESULT
+              </Text>
             </View>
           </View>
 
-          <View className="px-4 py-4 gap-4">
+          <View
+            style={{
+              alignItems: 'center',
+              paddingVertical: 20,
+              backgroundColor: biasStyle.bg,
+              borderBottomWidth: 1,
+              borderBottomColor: 'rgba(255,255,255,0.06)',
+            }}
+          >
+            <View style={{ flexDirection: 'row', alignItems: 'center', gap: 10 }}>
+              <Ionicons name={biasStyle.icon} size={32} color={biasStyle.text} />
+              <Text style={{ color: biasStyle.text, fontSize: 36, fontWeight: '800', letterSpacing: 0 }}>
+                {data.bias}
+              </Text>
+            </View>
+            <Text style={{ color: 'rgba(255,255,255,0.45)', fontSize: 11, marginTop: 4, letterSpacing: 0.5 }}>
+              Market Bias
+            </Text>
+          </View>
 
-            {/* Bias + Confidence row */}
-            <View className="flex-row gap-3">
-
-              {/* Bias */}
-              <View
-                className="flex-1 rounded-2xl p-3 border"
-                style={{ backgroundColor: biasStyle.bg, borderColor: biasStyle.border }}
-              >
-                <Text className="text-[#8B95A8] text-[10px] font-semibold tracking-widest uppercase mb-1.5">
-                  Bias
-                </Text>
-                <View className="flex-row items-center gap-1.5">
-                  <Ionicons
-                    name={data.bias === 'Bullish' ? 'trending-up' : data.bias === 'Bearish' ? 'trending-down' : 'remove'}
-                    size={18}
-                    color={biasStyle.text}
-                  />
-                  <Text className="text-lg font-bold" style={{ color: biasStyle.text }}>
-                    {data.bias}
-                  </Text>
-                </View>
-              </View>
-
-              {/* Confidence */}
-              <View className="flex-1 rounded-2xl p-3 border border-white/[0.10] bg-white/[0.04]">
-                <Text className="text-[#8B95A8] text-[10px] font-semibold tracking-widest uppercase mb-1.5">
+          <View style={{ padding: 14, gap: 10 }}>
+            <View
+              style={{
+                borderRadius: 16,
+                padding: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.10)',
+                backgroundColor: 'rgba(255,255,255,0.04)',
+              }}
+            >
+              <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <Text
+                  style={{
+                    color: '#8B95A8',
+                    fontSize: 10,
+                    fontWeight: '700',
+                    letterSpacing: 1.2,
+                    textTransform: 'uppercase',
+                  }}
+                >
                   Confidence
                 </Text>
-                <Text className="font-mono font-bold text-lg mb-2" style={{ color: confColor }}>
-                  {data.confidence}%
-                </Text>
-                {/* Bar */}
-                <View className="h-1.5 rounded-full bg-white/10">
+                <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                  <Text style={{ color: confidenceColor, fontSize: 20, fontWeight: '800', fontFamily: 'monospace' }}>
+                    {data.confidence}%
+                  </Text>
                   <View
-                    className="h-1.5 rounded-full"
-                    style={{ width: barWidth, backgroundColor: confColor }}
-                  />
+                    style={{
+                      paddingHorizontal: 7,
+                      paddingVertical: 2,
+                      borderRadius: 999,
+                      backgroundColor: `${confidenceColor}22`,
+                      borderWidth: 1,
+                      borderColor: `${confidenceColor}55`,
+                    }}
+                  >
+                    <Text style={{ color: confidenceColor, fontSize: 10, fontWeight: '700' }}>
+                      {data.confidenceLabel}
+                    </Text>
+                  </View>
                 </View>
-                <Text className="text-[10px] font-semibold mt-1" style={{ color: confColor }}>
-                  {data.confidenceLabel}
+              </View>
+              <View style={{ height: 6, borderRadius: 3, backgroundColor: 'rgba(255,255,255,0.08)' }}>
+                <View
+                  style={{
+                    height: 6,
+                    borderRadius: 3,
+                    width: confidenceWidth,
+                    backgroundColor: confidenceColor,
+                  }}
+                />
+              </View>
+            </View>
+
+            <View
+              style={{
+                borderRadius: 16,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.10)',
+                backgroundColor: 'rgba(255,255,255,0.04)',
+                overflow: 'hidden',
+              }}
+            >
+              <View style={{ paddingHorizontal: 12, paddingTop: 10, paddingBottom: 6 }}>
+                <Text
+                  style={{
+                    color: '#8B95A8',
+                    fontSize: 10,
+                    fontWeight: '700',
+                    letterSpacing: 1.2,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  Trade Setup
+                </Text>
+              </View>
+              {[
+                { label: 'Entry', value: data.entry, color: '#4F8EF7' },
+                { label: 'Stop Loss', value: data.sl, color: '#F87171' },
+                { label: 'Take Profit', value: data.tp, color: '#34D399' },
+                { label: 'R:R', value: data.rr, color: '#8B5CF6' },
+              ].map((row) => (
+                <View
+                  key={row.label}
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                    paddingHorizontal: 12,
+                    paddingVertical: 9,
+                    borderTopWidth: 1,
+                    borderTopColor: 'rgba(255,255,255,0.06)',
+                  }}
+                >
+                  <Text style={{ color: '#8B95A8', fontSize: 13 }}>{row.label}</Text>
+                  <Text style={{ color: row.color, fontSize: 14, fontWeight: '700', fontFamily: 'monospace' }}>
+                    {row.value}
+                  </Text>
+                </View>
+              ))}
+            </View>
+
+            <View
+              style={{
+                borderRadius: 16,
+                padding: 12,
+                borderWidth: 1,
+                borderColor: 'rgba(139,92,246,0.25)',
+                backgroundColor: 'rgba(139,92,246,0.07)',
+              }}
+            >
+              <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 }}>
+                <Ionicons name="sparkles" size={13} color="#8B5CF6" />
+                <Text
+                  style={{
+                    color: '#8B5CF6',
+                    fontSize: 10,
+                    fontWeight: '800',
+                    letterSpacing: 1.2,
+                    textTransform: 'uppercase',
+                  }}
+                >
+                  AI Insight
+                </Text>
+              </View>
+              <Text style={{ color: '#E0E8FF', fontSize: 13, lineHeight: 20 }}>{data.explanation}</Text>
+            </View>
+
+            <View style={{ flexDirection: 'row', gap: 10 }}>
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 14,
+                  padding: 11,
+                  borderWidth: 1,
+                  borderColor: 'rgba(52,211,153,0.25)',
+                  backgroundColor: 'rgba(52,211,153,0.07)',
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#8B95A8',
+                    fontSize: 10,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                    textTransform: 'uppercase',
+                    marginBottom: 4,
+                  }}
+                >
+                  Support
+                </Text>
+                <Text style={{ color: '#34D399', fontSize: 17, fontWeight: '800', fontFamily: 'monospace' }}>
+                  {data.support}
+                </Text>
+              </View>
+              <View
+                style={{
+                  flex: 1,
+                  borderRadius: 14,
+                  padding: 11,
+                  borderWidth: 1,
+                  borderColor: 'rgba(248,113,113,0.25)',
+                  backgroundColor: 'rgba(248,113,113,0.07)',
+                }}
+              >
+                <Text
+                  style={{
+                    color: '#8B95A8',
+                    fontSize: 10,
+                    fontWeight: '700',
+                    letterSpacing: 1,
+                    textTransform: 'uppercase',
+                    marginBottom: 4,
+                  }}
+                >
+                  Resistance
+                </Text>
+                <Text style={{ color: '#F87171', fontSize: 17, fontWeight: '800', fontFamily: 'monospace' }}>
+                  {data.resistance}
                 </Text>
               </View>
             </View>
-
-            {/* Key Levels */}
-            <View className="rounded-2xl p-3 border border-white/[0.10] bg-white/[0.04]">
-              <Text className="text-[#8B95A8] text-[10px] font-semibold tracking-widest uppercase mb-3">
-                Key Levels
-              </Text>
-              <View className="flex-row justify-between">
-                <View>
-                  <Text className="text-[#8B95A8] text-xs mb-0.5">Support</Text>
-                  <Text className="text-[#34D399] font-mono font-bold text-base">{data.support}</Text>
-                </View>
-                <View className="items-end">
-                  <Text className="text-[#8B95A8] text-xs mb-0.5">Resistance</Text>
-                  <Text className="text-[#F87171] font-mono font-bold text-base">{data.resistance}</Text>
-                </View>
-              </View>
-            </View>
-
-            {/* Risk Summary */}
-            <View className="rounded-2xl p-3 border border-[#8B5CF6]/25 bg-[#8B5CF6]/[0.06]">
-              <View className="flex-row items-center gap-1.5 mb-1.5">
-                <Ionicons name="shield-checkmark-outline" size={13} color="#8B5CF6" />
-                <Text className="text-[#8B5CF6] text-[10px] font-bold tracking-widest uppercase">
-                  Risk Summary
-                </Text>
-              </View>
-              <Text className="text-[#F0F4FF] text-xs leading-5">{data.riskSummary}</Text>
-            </View>
-
           </View>
 
-          {/* View Full Report CTA */}
-          <View className="px-4 pb-4">
-            <Pressable onPress={onViewReport} className="active:opacity-70">
+          <View style={{ paddingHorizontal: 14, paddingBottom: 14 }}>
+            <Pressable
+              onPress={onViewReport}
+              style={{
+                shadowColor: '#4F8EF7',
+                shadowOpacity: 0.5,
+                shadowRadius: 20,
+                shadowOffset: { width: 0, height: 6 },
+                elevation: 10,
+              }}
+            >
               <LinearGradient
                 colors={['#4F8EF7', '#8B5CF6']}
                 start={{ x: 0, y: 0 }}
                 end={{ x: 1, y: 0 }}
-                className="rounded-2xl"
+                style={{ borderRadius: 18 }}
               >
-                <View className="flex-row items-center justify-center h-12 gap-2">
-                  <Ionicons name="document-text-outline" size={16} color="#fff" />
-                  <Text className="text-white text-sm font-bold tracking-wide">
+                <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', height: 50, gap: 8 }}>
+                  <Ionicons name="document-text-outline" size={17} color="#fff" />
+                  <Text style={{ color: '#fff', fontSize: 15, fontWeight: '700', letterSpacing: 0.4 }}>
                     View Full Report
                   </Text>
                 </View>
               </LinearGradient>
             </Pressable>
           </View>
-
         </View>
       </BlurView>
     </View>

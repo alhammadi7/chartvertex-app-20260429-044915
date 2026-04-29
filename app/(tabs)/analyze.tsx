@@ -41,6 +41,12 @@ export default function AnalyzeScreen() {
     confidenceLabel: 'High',
     support: '65,800',
     resistance: '68,000',
+    entry: '66,200',
+    sl: '65,100',
+    tp: '68,800',
+    rr: '1:2.8',
+    explanation:
+      'Price holding above support with higher lows, bullish continuation likely toward 68,000 liquidity zone.',
     riskSummary:
       'Valid BOS above 65,800. Entry near 66,200 with SL at 65,100. Targets at 67,500 / 68,800. R:R 1:2.8.',
   };
