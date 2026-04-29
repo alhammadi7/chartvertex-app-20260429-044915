@@ -12,9 +12,7 @@ export default function GlassTopBar({ onProfilePress }: Props) {
     <View className="mx-4 mt-2 rounded-2xl overflow-hidden border border-white/10">
       <BlurView intensity={40} tint="dark">
         <View className="flex-row items-center justify-between px-4 h-14 bg-white/[0.08]">
-          <Pressable hitSlop={12} className="p-1">
-            <Ionicons name="menu" size={22} color="#F0F4FF" />
-          </Pressable>
+          <View className="w-9" />
 
           <Text className="text-[#F0F4FF] text-base font-semibold tracking-wider">
             ChartVertex
