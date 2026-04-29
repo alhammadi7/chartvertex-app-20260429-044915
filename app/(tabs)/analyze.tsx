@@ -122,7 +122,7 @@ export default function AnalyzeScreen() {
             AI Chart Analysis
           </Text>
           <Text className="text-[#8B95A8] text-sm mb-4">
-            Upload your chart and configure trade parameters
+            AI-powered chart analysis for smarter trading decisions
           </Text>
 
           <View className="mb-4">
@@ -131,6 +131,24 @@ export default function AnalyzeScreen() {
               timeframe={timeframe}
               imageUri={image}
             />
+          </View>
+
+          <View className="mb-3 items-center">
+            <RunAnalysisButton
+              enabled={!!image}
+              loading={loading}
+              onPress={handleAnalyze}
+            />
+            {!loading ? (
+              <View className="mt-3 items-center gap-1">
+                <Text className="text-[#4A5568] text-xs font-medium">
+                  AI will analyze:
+                </Text>
+                <Text className="text-[#4A5568] text-xs text-center leading-5">
+                  Market Structure - Support & Resistance - Trade Setup
+                </Text>
+              </View>
+            ) : null}
           </View>
 
           <View className="mb-5">
@@ -188,13 +206,6 @@ export default function AnalyzeScreen() {
           ) : null}
         </ScrollView>
 
-        <View className="absolute bottom-8 left-4 right-4">
-          <RunAnalysisButton
-            enabled={!!image}
-            loading={loading}
-            onPress={handleAnalyze}
-          />
-        </View>
       </SafeAreaView>
 
       <BottomNav />

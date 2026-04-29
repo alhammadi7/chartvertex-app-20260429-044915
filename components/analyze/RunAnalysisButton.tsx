@@ -10,9 +10,8 @@ type Props = {
 };
 
 const LOADING_MESSAGES = [
-  'Reading Market Structure...',
+  'Analyzing Market Structure...',
   'Detecting Support & Resistance...',
-  'Evaluating Liquidity...',
   'Generating Trade Setup...',
 ];
 
@@ -36,7 +35,7 @@ export default function RunAnalysisButton({ enabled, loading, onPress }: Props) 
     <Pressable
       onPress={onPress}
       disabled={!enabled || loading}
-      className={enabled ? 'opacity-100' : 'opacity-35'}
+      className={`w-full ${enabled ? 'opacity-100' : 'opacity-35'}`}
       style={
         enabled
           ? {
@@ -53,17 +52,17 @@ export default function RunAnalysisButton({ enabled, loading, onPress }: Props) 
         colors={loading ? ['#2A4A8A', '#4A2A8A'] : ['#4F8EF7', '#8B5CF6']}
         start={{ x: 0, y: 0 }}
         end={{ x: 1, y: 0 }}
-        className="rounded-[20px]"
+        className="rounded-[22px]"
       >
-        <View className="flex-row items-center justify-center h-14 gap-2.5">
+        <View className="flex-row items-center justify-center h-16 gap-2.5">
           {loading ? (
             <Text className="text-white/80 text-sm font-semibold tracking-wide">
               {LOADING_MESSAGES[msgIndex]}
             </Text>
           ) : (
             <>
-              <Ionicons name="flash" size={18} color="#FFFFFF" />
-              <Text className="text-white text-base font-bold tracking-wide">
+              <Ionicons name="flash" size={20} color="#FFFFFF" />
+              <Text className="text-white text-lg font-bold tracking-wide">
                 Run AI Analysis
               </Text>
             </>
