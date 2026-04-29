@@ -18,8 +18,10 @@ import UploadFallback from '@/components/analyze/UploadFallback';
 import BottomNav from '@/components/BottomNav';
 import GlassTopBar from '@/components/GlassTopBar';
 import ProfileModal from '@/components/ProfileModal';
+import { AnalysisOutput } from '@/ai/types';
 import { Gradients } from '@/constants/theme';
 import { AnalysisMode, MarketCategory, Timeframe } from '@/constants/types';
+import { useAnalyzeChart } from '@/hooks/useAnalyzeChart';
 
 export default function AnalyzeScreen() {
   const router = useRouter();
@@ -30,26 +32,16 @@ export default function AnalyzeScreen() {
   const [category, setCategory] = useState<MarketCategory>('Crypto');
   const [symbol, setSymbol] = useState('BTCUSD');
   const [timeframe, setTimeframe] = useState<Timeframe>('4H');
-  const [loading, setLoading] = useState(false);
   const [profileVisible, setProfileVisible] = useState(false);
-  const [result, setResult] = useState<AnalysisPreview | null>(null);
-  const [error, setError] = useState(false);
+  const {
+    analyze,
+    loading: aiLoading,
+    result: aiResult,
+    error: aiError,
+    provider,
+  } = useAnalyzeChart();
 
-  const mockResult: AnalysisPreview = {
-    bias: 'Bullish',
-    confidence: 78,
-    confidenceLabel: 'High',
-    support: '65,800',
-    resistance: '68,000',
-    entry: '66,200',
-    sl: '65,100',
-    tp: '68,800',
-    rr: '1:2.8',
-    explanation:
-      'Price holding above support with higher lows, bullish continuation likely toward 68,000 liquidity zone.',
-    riskSummary:
-      'Valid BOS above 65,800. Entry near 66,200 with SL at 65,100. Targets at 67,500 / 68,800. R:R 1:2.8.',
-  };
+  const result = aiResult ? mapAnalysisOutput(aiResult) : null;
 
   const pickImage = async (source: 'camera' | 'gallery') => {
     try {
@@ -86,13 +78,13 @@ export default function AnalyzeScreen() {
   const handleAnalyze = () => {
     if (!image) return;
 
-    setError(false);
-    setResult(null);
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      setResult(mockResult);
-    }, 3600);
+    analyze({
+      imageUri: image,
+      symbol,
+      timeframe,
+      analysisMode: mode,
+      marketCategory: category,
+    });
   };
 
   return (
@@ -136,10 +128,10 @@ export default function AnalyzeScreen() {
           <View className="mb-3 items-center">
             <RunAnalysisButton
               enabled={!!image}
-              loading={loading}
+              loading={aiLoading}
               onPress={handleAnalyze}
             />
-            {!loading ? (
+            {!aiLoading ? (
               <View className="mt-3 items-center gap-1">
                 <Text className="text-[#4A5568] text-xs font-medium">
                   AI will analyze:
@@ -180,16 +172,21 @@ export default function AnalyzeScreen() {
             <MarketNewsSection />
           </View>
 
-          {error ? (
+          {aiError ? (
             <View className="mb-5 rounded-2xl overflow-hidden border border-[#F87171]/30 bg-[#F87171]/[0.06] p-4">
               <Text className="text-[#F87171] text-sm font-semibold text-center">
-                Analysis failed. Please try again.
+                {aiError}
               </Text>
             </View>
           ) : null}
 
           {result ? (
             <View className="mb-6">
+              {provider ? (
+                <Text className="text-[#4A5568] text-[10px] font-semibold text-center mb-2 uppercase tracking-widest">
+                  Analyzed by {provider}
+                </Text>
+              ) : null}
               <ResultPreviewCard
                 data={result}
                 onViewReport={() =>
@@ -215,4 +212,20 @@ export default function AnalyzeScreen() {
       />
     </View>
   );
+}
+
+function mapAnalysisOutput(output: AnalysisOutput): AnalysisPreview {
+  return {
+    bias: output.bias,
+    confidence: output.confidence,
+    confidenceLabel: output.probabilityLabel,
+    support: output.support,
+    resistance: output.resistance,
+    entry: output.entry,
+    sl: output.stopLoss,
+    tp: output.takeProfit,
+    rr: output.riskReward,
+    explanation: output.aiRecommendation,
+    riskSummary: output.riskPlan,
+  };
 }
