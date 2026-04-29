@@ -4,7 +4,6 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { BlurView } from 'expo-blur';
 import { Ionicons } from '@expo/vector-icons';
-import { useRouter } from 'expo-router';
 
 import GlassTopBar from '@/components/GlassTopBar';
 import BottomNav from '@/components/BottomNav';
@@ -24,8 +23,6 @@ const RECENT = [
 ];
 
 export default function DashboardScreen() {
-  const router = useRouter();
-
   return (
     <View className="flex-1 bg-[#06080F]">
       <StatusBar barStyle="light-content" />
@@ -36,7 +33,7 @@ export default function DashboardScreen() {
       />
 
       <SafeAreaView className="flex-1" edges={['top']}>
-        <GlassTopBar onBackPress={() => router.back()} />
+        <GlassTopBar />
 
         <ScrollView
           className="flex-1"
