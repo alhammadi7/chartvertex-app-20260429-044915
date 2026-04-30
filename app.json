@@ -1,0 +1,51 @@
+{
+  "expo": {
+    "name": "ChartVertex",
+    "slug": "chartvertex",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "scheme": "chartvertex",
+    "userInterfaceStyle": "dark",
+    "newArchEnabled": true,
+    "splash": {
+      "backgroundColor": "#06080F",
+      "resizeMode": "contain"
+    },
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.chartvertex.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "ChartVertex needs camera access so you can capture chart screenshots for AI analysis.",
+        "NSPhotoLibraryUsageDescription": "ChartVertex needs photo library access so you can select chart images for AI analysis."
+      }
+    },
+    "android": {
+      "package": "com.chartvertex.app",
+      "adaptiveIcon": {
+        "backgroundColor": "#06080F"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE"
+      ]
+    },
+    "web": {
+      "bundler": "metro"
+    },
+    "plugins": [
+      "expo-router",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "ChartVertex needs photo library access so you can select chart images for AI analysis.",
+          "cameraPermission": "ChartVertex needs camera access so you can capture chart screenshots for AI analysis."
+        }
+      ],
+      "expo-asset",
+      "expo-font"
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}
