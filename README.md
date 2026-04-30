@@ -1,55 +1,36 @@
-# ChartVertex
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-AI-powered chart analysis app. Upload a chart image, get AI-driven entry, stop loss, take profit, and confidence rating.
+## Getting Started
 
-**Stack:** React Native · Expo SDK 52 · expo-router · NativeWind v4 · TypeScript
-
-**Design:** Meridian Glass visuals + Obsidian Pulse structure (premium dark glass UI).
-
-## Setup
+First, run the development server:
 
 ```bash
-npm install
-npx expo start
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
 ```
 
-Then press `i` for iOS simulator, `a` for Android, or scan the QR with Expo Go.
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-## Structure
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-```
-app/
-  _layout.tsx              # Root navigator
-  index.tsx                # Redirect to /analyze
-  (tabs)/
-    _layout.tsx            # Tabs stack
-    analyze.tsx            # Upload & Analyze screen
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
 
-components/
-  GlassTopBar.tsx          # Top navigation bar
-  UploadDropzone.tsx       # Empty-state upload area
-  ChartCanvas.tsx          # Uploaded image with gradient border
-  OverlayChipsTop.tsx      # Pair / Timeframe / Remove chips
-  OverlayChipsBottom.tsx   # Long / Short / Neutral bias chips
-  FloatingCTA.tsx          # Analyze Chart button
-  ui/
-    GlassChip.tsx          # Reusable glass pill primitive
+## Learn More
 
-constants/
-  theme.ts                 # Colors, gradients, radii, shadows
-  types.ts                 # Bias, Timeframe types
+To learn more about Next.js, take a look at the following resources:
 
-global.css                 # NativeWind directives
-tailwind.config.js         # Tailwind/NativeWind config
-```
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
 
-## Screen Spec
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-**State A — Empty:** dashed glass dropzone with Camera/Gallery buttons.
-**State B — Uploaded:** chart image fills 70–80% of viewport, with floating glass chips overlaying top (pair, timeframe, remove) and bottom (Long/Short/Neutral).
+## Deploy on Vercel
 
-CTA floats at bottom with gradient + glow; only enabled when image is present.
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
-## Next steps
-
-Wire `handleAnalyze()` in `app/(tabs)/analyze.tsx` to your AI backend.
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
